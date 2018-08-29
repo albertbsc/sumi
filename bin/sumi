@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [[ -z "$SUMI_DIR" ]]
+then
+  echo "To run SUMI first set the variable $SUMI_DIR"
+  return -1
+fi
+  
+python $SUMI_DIR/src/sumi.py $@
