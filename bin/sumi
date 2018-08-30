@@ -2,8 +2,9 @@
 
 if [[ -z "$SUMI_DIR" ]]
 then
-  echo "To run SUMI first set the variable $SUMI_DIR"
-  return -1
+  >&2 echo "To run SUMI first set the variable \$SUMI_DIR"
+  >&2 echo "    export \$SUMI_DIR=/path/to/sumi"
+  exit
 fi
   
 python $SUMI_DIR/src/sumi.py $@
