@@ -1,5 +1,6 @@
 import ConfigParser
 import os
+import logging
 
 class ServerConfig(object):
     """Data structure to store server configuration"""
@@ -94,10 +95,14 @@ class Config(object):
         self.home = self.home + "/.sumi/"
         self.file_server = self.home + "servers.conf"
         self.file_jobs = self.home + "jobs.conf"
-        self.server = ServerConfig()
-        self.jobs = JobConfig()
-        
-    
+        #self.server = ServerConfig()
+        #self.jobs = JobConfig()
+        self.server = None
+        self.jobs = None
+        self.selected_jobs = []
+        self.selected_servers = []
+
+
     def __new__(cls, *args, **kwargs):
         """Singleton"""
         if not cls.__instance:
@@ -109,15 +114,17 @@ class Config(object):
         """Load servers.conf file"""
         if not os.path.exists(self.file_server):
             raise IOError, self.file_server + " does not exist"
-    
+
         config = ConfigParser.ConfigParser()
         config.read(self.file_server)
-        #print self.file_server
         for cluster in config.sections():
-            self.server.set_manager(config.get(cluster, 'manager'))
-            self.server.set_server(config.get(cluster, 'server'))
-            self.server.set_user(config.get(cluster, 'user'))
-            self.server.set_protocol(config.get(cluster, 'protocol'))
+            if(self.server == None):
+                self.server = {}
+            self.server[cluster] = ServerConfig()
+            self.server[cluster].set_manager(config.get(cluster, 'manager'))
+            self.server[cluster].set_server(config.get(cluster, 'server'))
+            self.server[cluster].set_user(config.get(cluster, 'user'))
+            self.server[cluster].set_protocol(config.get(cluster, 'protocol'))
 
     def load_jobs(self):
         """Load jobs.conf file"""
@@ -128,17 +135,46 @@ class Config(object):
         config.read(self.file_jobs)
 
         for jobs in config.sections():
-            self.jobs.set_udocker(config.get(jobs, 'udocker'))
-            self.jobs.set_arguments(config.get(jobs, 'arguments'))
-            self.jobs.set_cpus(config.get(jobs, 'cpus'))
-            self.jobs.set_time(config.get(jobs, 'time'))
-            self.jobs.set_threads(config.get(jobs, 'threads_per_process'))
-            self.jobs.set_name(jobs)
-            
+            if(self.jobs == None):
+                self.jobs = {}
+            self.jobs[jobs] = JobConfig()
+            self.jobs[jobs].set_udocker(config.get(jobs, 'udocker'))
+            self.jobs[jobs].set_arguments(config.get(jobs, 'arguments'))
+            self.jobs[jobs].set_cpus(config.get(jobs, 'cpus'))
+            self.jobs[jobs].set_time(config.get(jobs, 'time'))
+            self.jobs[jobs].set_threads(config.get(jobs, 'threads_per_process'))
+            self.jobs[jobs].set_name(jobs)
 
-    def get_server(self):
-        return self.server
+    def get_server(self, key):
+        return self.server[key]
 
-    def get_jobs(self):
-        return self.jobs
+    def get_jobs(self, key):
+        return self.jobs[key]
+        
+
+    def get_machine_list(self):
+        return self.selected_servers
+
+    def get_job_list(self):
+        return self.selected_jobs
+
+    def set_selected_jobs(self, jobs):
+        for job in jobs:
+            if job not in self.jobs:
+                logging.warning("Job " + job + " does not exist")
+            else:
+                self.selected_jobs.append(job)
+        if(len(self.selected_jobs) == 0):
+            logging.error("Specified jobs do not exist. Check your configuration")
+            raise Exception, "No valid job identifiers"
+
+    def set_selected_servers(self, servers):
+        for server in servers:
+            if server not in self.server:
+                logging.warning("Server " + server + " does not exist")
+            else:
+                self.selected_servers.append(server)
+        if(len(self.selected_servers) == 0):
+            logging.error("Specified servers do not exist. Check your configuration")
+            raise Exception, "No valid server identifiers"
 

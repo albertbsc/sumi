@@ -18,6 +18,10 @@ if __name__ == "__main__":
         help="Upload local file")
     parser.add_argument("-d", "--download", dest="down",
         help="Download remote file")
+    parser.add_argument("-m", "--machine", nargs="+", dest="machine",
+        help="List of machines were to submit",  required=True)
+    parser.add_argument("-j", "--job", nargs="+", dest="jobs",
+        help="List of jobs to be submitted", required=True)
     args = parser.parse_args()
 
     #Start logging and configure it with timestamp
@@ -33,12 +37,21 @@ if __name__ == "__main__":
     conf.load_server()
     conf.load_jobs()
 
+    #Get machines
+    if args.machine:
+        conf.set_selected_servers(args.machine)
+        print(args.machine)
+
+    #Get jobs
+    if args.jobs:
+        conf.set_selected_jobs(args.jobs)
+        print(args.jobs)
+
     #Run job
     if args.run == True:
         logging.info('Job: configuring')
         sub = Submission(conf)
-        sub.connect()
-        sub.submit()
+        sub.run()
 
     #Upload local files
     if args.up:

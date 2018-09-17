@@ -15,24 +15,30 @@ class Submission(object):
         self.config = config
         self.js = None
 
-    def connect(self):
+    def run(self):
+        for machine in self.config.get_machine_list(): # TODO
+            self.connect(machine)
+            for job in self.config.get_job_list(): # TODO
+                self.submit(job)
+
+    def connect(self, machine):
         """Stablish SSH connection with remote cluster"""
-        
-        ctx = saga.Context(self.config.get_server().get_protocol())
-        ctx.user_id = self.config.get_server().get_user()
+
+        ctx = saga.Context(self.config.get_server(machine).get_protocol())
+        ctx.user_id = self.config.get_server(machine).get_user()
         session = saga.Session()
         session.add_context(ctx)
 
         try:
-            url = self.config.get_server().get_manager() + "+" + \
-                self.config.get_server().get_protocol() + "://" + \
-                self.config.get_server().get_server()
+            url = self.config.get_server(machine).get_manager() + "+" + \
+                self.config.get_server(machine).get_protocol() + "://" + \
+                self.config.get_server(machine).get_server()
             self.js = saga.job.Service(url, session=session)
         except saga.exceptions.AuthenticationFailed:
             logging.error("Job: Authentication failed")
             raise saga.exceptions.AuthenticationFailed
 
-    def submit(self):
+    def submit(self, job):
         """Submit job with the configured job and machine
         
         Returns:
@@ -43,13 +49,13 @@ class Submission(object):
         jd = saga.job.Description()
 
         # Set job configuration
-        jd.executable      = self.config.get_jobs().get_udocker()
-        jd.arguments       = self.config.get_jobs().get_arguments()
-        jd.threads_per_process = self.config.get_jobs().get_threads()
-        jd.total_cpu_count = self.config.get_jobs().get_cpus()
-        jd.wall_time_limit = self.config.get_jobs().get_time()
-        jd.output          = self.config.get_jobs().get_name() + "-%J.stdout"
-        jd.error           = self.config.get_jobs().get_name() + "-%J.stderr"
+        jd.executable      = self.config.get_jobs(job).get_udocker()
+        jd.arguments       = self.config.get_jobs(job).get_arguments()
+        jd.threads_per_process = self.config.get_jobs(job).get_threads()
+        jd.total_cpu_count = self.config.get_jobs(job).get_cpus()
+        jd.wall_time_limit = self.config.get_jobs(job).get_time()
+        jd.output          = self.config.get_jobs(job).get_name() + "-%J.stdout"
+        jd.error           = self.config.get_jobs(job).get_name() + "-%J.stderr"
         
         #Create job and run
         job = self.js.create_job(jd)
