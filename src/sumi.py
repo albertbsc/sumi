@@ -4,6 +4,7 @@ import argparse
 import logging
 import saga
 import paramiko
+import sys
 from data import Data
 from submission import Submission
 from config import Config
@@ -19,9 +20,9 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--download", dest="down",
         help="Download remote file")
     parser.add_argument("-m", "--machine", nargs="+", dest="machine",
-        help="List of machines were to submit",  required=True)
+        help="List of machines were to submit")#,  required=True)
     parser.add_argument("-j", "--job", nargs="+", dest="jobs",
-        help="List of jobs to be submitted", required=True)
+        help="List of jobs to be submitted")#, required=True)
     args = parser.parse_args()
 
     #Start logging and configure it with timestamp
@@ -49,12 +50,18 @@ if __name__ == "__main__":
 
     #Run job
     if args.run == True:
+        if not args.machine or not args.jobs:
+            logging.error("SUMI: no machine or jobs specified")
+            raise Exception
         logging.info('Job: configuring')
         sub = Submission(conf)
         sub.run()
 
     #Upload local files
     if args.up:
+        if not args.machine:
+            logging.error("SUMI: no machine selected")
+            raise Exception
         data = Data(conf)
         data.upload(args.up)
 

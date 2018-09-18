@@ -11,7 +11,8 @@ class Data(object):
             server (obj): Contains information of the server configuration.
         """
         
-        self.server = config.get_server()
+        self.config = config
+        #self.server = config.get_server()
 
     def upload(self, fd):
         """Upload a local file to the remote server.
@@ -19,14 +20,15 @@ class Data(object):
         Args:
             fd (str): Path to local file.
         """
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostname=self.server.get_server(), \
-            username=self.server.get_user())
-        sftp = ssh.open_sftp()
-        sftp.put(fd, fd)
-        sftp.close()
-        ssh.close()
+        for machine in self.config.get_machine_list():
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(hostname=self.config.get_server(machine).get_server(), \
+                username=self.config.get_server(machine).get_user())
+            sftp = ssh.open_sftp()
+            sftp.put(fd, fd)
+            sftp.close()
+            ssh.close()
 
     def download(self, fd):
         """Download a remote file to local.
@@ -34,12 +36,13 @@ class Data(object):
         Args:
             fd (str): Path to remote file.
         """
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostname=self.server.get_server(), \
-            username=self.server.get_user())
-        sftp = ssh.open_sftp()
-        sftp.get(fd, fd)
-        sftp.close()
-        ssh.close()
+        for machine in self.config.get_machine_list():
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(hostname=self.config.get_server(machine).get_server(), \
+                username=self.config.get_server(machine).get_user())
+            sftp = ssh.open_sftp()
+            sftp.get(fd, fd)
+            sftp.close()
+            ssh.close()
 
