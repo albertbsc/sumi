@@ -41,12 +41,12 @@ if __name__ == "__main__":
     #Get machines
     if args.machine:
         conf.set_selected_servers(args.machine)
-        print(args.machine)
+        #print(args.machine)
 
     #Get jobs
     if args.jobs:
         conf.set_selected_jobs(args.jobs)
-        print(args.jobs)
+        #print(args.jobs)
 
     #Run job
     if args.run == True:

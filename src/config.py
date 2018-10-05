@@ -38,12 +38,12 @@ class ServerConfig(object):
 class JobConfig(object):
     """Data structure to store jobs configuration"""
     def __init__(self):
-        self.udocker = None
-        self.arguments = None
-        self.cpus = None
-        self.time = None
-        self.name = None
-        self.threads = None
+        self.udocker    = None
+        self.arguments  = None
+        self.cpus       = None
+        self.time       = None
+        self.name       = None
+        self.threads    = None
 
     def set_udocker(self, udocker):
         self.udocker = udocker
@@ -102,13 +102,11 @@ class Config(object):
         self.selected_jobs = []
         self.selected_servers = []
 
-
     def __new__(cls, *args, **kwargs):
         """Singleton"""
         if not cls.__instance:
             cls.__instance = super(Config, cls).__new__(cls, *args, **kwargs)
         return cls.__instance
-    
 
     def load_server(self):
         """Load servers.conf file"""
@@ -117,14 +115,14 @@ class Config(object):
 
         config = ConfigParser.ConfigParser()
         config.read(self.file_server)
-        for cluster in config.sections():
+        for server_id in config.sections():
             if(self.server == None):
-                self.server = {}
-            self.server[cluster] = ServerConfig()
-            self.server[cluster].set_manager(config.get(cluster, 'manager'))
-            self.server[cluster].set_server(config.get(cluster, 'server'))
-            self.server[cluster].set_user(config.get(cluster, 'user'))
-            self.server[cluster].set_protocol(config.get(cluster, 'protocol'))
+                self.server = {}    #Initialize dictionary
+            self.server[server_id] = ServerConfig()
+            self.server[server_id].set_manager(config.get(server_id, 'manager'))
+            self.server[server_id].set_server(config.get(server_id, 'server'))
+            self.server[server_id].set_user(config.get(server_id, 'user'))
+            self.server[server_id].set_protocol(config.get(server_id, 'protocol'))
 
     def load_jobs(self):
         """Load jobs.conf file"""
@@ -134,23 +132,22 @@ class Config(object):
         config = ConfigParser.ConfigParser()
         config.read(self.file_jobs)
 
-        for jobs in config.sections():
+        for job_id in config.sections():
             if(self.jobs == None):
                 self.jobs = {}
-            self.jobs[jobs] = JobConfig()
-            self.jobs[jobs].set_udocker(config.get(jobs, 'udocker'))
-            self.jobs[jobs].set_arguments(config.get(jobs, 'arguments'))
-            self.jobs[jobs].set_cpus(config.get(jobs, 'cpus'))
-            self.jobs[jobs].set_time(config.get(jobs, 'time'))
-            self.jobs[jobs].set_threads(config.get(jobs, 'threads_per_process'))
-            self.jobs[jobs].set_name(jobs)
+            self.jobs[job_id] = JobConfig()
+            self.jobs[job_id].set_udocker(config.get(job_id, 'udocker'))
+            self.jobs[job_id].set_arguments(config.get(job_id, 'arguments'))
+            self.jobs[job_id].set_cpus(config.get(job_id, 'cpus'))
+            self.jobs[job_id].set_time(config.get(job_id, 'time'))
+            self.jobs[job_id].set_threads(config.get(job_id, 'threads_per_process'))
+            self.jobs[job_id].set_name(job_id)
 
     def get_server(self, key):
         return self.server[key]
 
     def get_jobs(self, key):
         return self.jobs[key]
-        
 
     def get_machine_list(self):
         return self.selected_servers

@@ -16,10 +16,10 @@ class Submission(object):
         self.js = None
 
     def run(self):
-        for machine in self.config.get_machine_list(): # TODO
-            self.connect(machine)
-            for job in self.config.get_job_list(): # TODO
-                self.submit(job)
+        for machine_id in self.config.get_machine_list():
+            self.connect(machine_id)
+            for job_id in self.config.get_job_list():
+                self.submit(job_id)
 
     def connect(self, machine):
         """Stablish SSH connection with remote cluster"""
@@ -56,7 +56,7 @@ class Submission(object):
         jd.wall_time_limit = self.config.get_jobs(job).get_time()
         jd.output          = self.config.get_jobs(job).get_name() + "-%J.stdout"
         jd.error           = self.config.get_jobs(job).get_name() + "-%J.stderr"
-        
+
         #Create job and run
         job = self.js.create_job(jd)
         job.run()
