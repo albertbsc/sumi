@@ -10,22 +10,22 @@ class ServerConfig(object):
         self.server = None
         self.user = None
         self.protocol = "ssh"
-        
+
     def set_manager(self, manager):
         self.manager = manager
-            
+
     def set_server(self, server):
         self.server = server
 
     def set_user(self, user):
         self.user = user
-        
+
     def set_protocol(self, protocol):
         self.protocol = protocol
 
     def get_manager(self):
         return self.manager
-        
+
     def get_server(self):
         return self.server
 
@@ -62,22 +62,22 @@ class JobConfig(object):
 
     def set_name(self, name):
         self.name = name
-        
+
     def get_udocker(self):
         return self.udocker
-        
+
     def get_arguments(self):
         return self.arguments
-        
+
     def get_cpus(self):
         return self.cpus
-        
+
     def get_time(self):
         return self.time
-        
+
     def get_threads(self):
         return self.threads
-        
+
     def get_name(self):
         return self.name
 
@@ -88,7 +88,7 @@ class Config(object):
     """
 
     __instance = None
-    
+
     def __init__(self):
         self.conf = None
         self.home = os.path.expanduser("~") # Get home directory
@@ -174,4 +174,3 @@ class Config(object):
         if(len(self.selected_servers) == 0):
             logging.error("Specified servers do not exist. Check your configuration")
             raise Exception, "No valid server identifiers"
-

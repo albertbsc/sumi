@@ -75,4 +75,3 @@ if __name__ == "__main__":
         logging.info('SUMI: No option selected')
 
     logging.info('SUMI: Done')
-

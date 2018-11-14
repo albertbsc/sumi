@@ -10,13 +10,13 @@ class Data(object):
         Attributes:
             server (obj): Contains information of the server configuration.
         """
-        
+
         self.config = config
         #self.server = config.get_server()
 
     def upload(self, fd):
         """Upload a local file to the remote server.
-        
+
         Args:
             fd (str): Path to local file.
         """
@@ -32,7 +32,7 @@ class Data(object):
 
     def download(self, fd):
         """Download a remote file to local.
-        
+
         Args:
             fd (str): Path to remote file.
         """
@@ -45,4 +45,3 @@ class Data(object):
             sftp.get(fd, fd)
             sftp.close()
             ssh.close()
-

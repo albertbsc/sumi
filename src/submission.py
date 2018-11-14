@@ -24,10 +24,13 @@ class Submission(object):
     def connect(self, machine):
         """Stablish SSH connection with remote cluster"""
 
-        ctx = saga.Context(self.config.get_server(machine).get_protocol())
-        ctx.user_id = self.config.get_server(machine).get_user()
-        session = saga.Session()
-        session.add_context(ctx)
+        try:
+            ctx = saga.Context(self.config.get_server(machine).get_protocol())
+            ctx.user_id = self.config.get_server(machine).get_user()
+            session = saga.Session()
+            session.add_context(ctx)
+        except saga.SagaException, ex:
+            logging.error("Job: ", str(ex))
 
         try:
             url = self.config.get_server(machine).get_manager() + "+" + \
@@ -40,7 +43,7 @@ class Submission(object):
 
     def submit(self, job):
         """Submit job with the configured job and machine
-        
+
         Returns:
             int: The job exit code. 0 if successful.
         """
@@ -74,7 +77,5 @@ class Submission(object):
 
         if job.exit_code != "0":
             logging.error("Job: failed, check your job configuration")
-        
+
         return int(job.exit_code)
-
-
