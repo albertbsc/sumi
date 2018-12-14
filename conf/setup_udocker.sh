@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 
+# This script installs uDocker in a
+# Set variable $SUMI_DIR to specify the directory where will uDocker will be
+# installed
+
+
+# $SUMI_DIR will contain
 SUMI_DIR=$HOME/.sumi
-SUMI_UDOCKER_DIR=$SUMI_DIR/udocker
+
+SUMI_UDOCKER_DIR=$SUMI_DIR/sumi-udocker
 UDOCKER_DIR=$HOME/.udocker
-TMP_DIR=$HOME/.tmp
+TMP_DIR=$SUMI_DIR/.tmp_udocker
 
 UDOCKER_TARBALL=$HOME/udocker-1.1.1.tar.gz
 IMAS_IMAGE=$HOME/imas-installer-20180529181447.tar.xz
 
+# Check if the script already exists
 if [ -f "$SUMI_UDOCKER_DIR/udocker.py" ]
 then
     >&2 echo "It looks like uDocker is already installed."
@@ -35,7 +43,7 @@ mkdir $SUMI_UDOCKER_DIR/dot-udocker
 
 if [ -d "$UDOCKER_DIR" ]
 then
-    >&2 echo Cannot continue. $UDOCKER_DIR already exists. 
+    >&2 echo Cannot continue. $UDOCKER_DIR already exists.
     >&2 echo Please remove the directory and run the script again
     exit
 fi
@@ -48,6 +56,8 @@ echo "UDOCKER_TARBALL='$UDOCKER_TARBALL'" >> ~/.udocker/udocker.conf
 
 cd ~
 
-#Load image
-$SUMI_UDOCKER_DIR/udocker.py load -i $IMAS_IMAGE
-$SUMI_UDOCKER_DIR/udocker.py create --name=imas imas-installer:20180529181447
+echo "To add udocker.py to \$PATH add the following line to .bashrc"
+echo "Bash"
+echo "     PATH=\$PATH:$SUMI_UDOCKER_DIR/udocker.py >> ~/.bashrc"
+echo "TCSH"
+echo "     setenv PATH \$PATH\:$SUMI_UDOCKER_DIR/udocker.py >> ~/.bashrc"
