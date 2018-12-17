@@ -1,5 +1,6 @@
 import saga
 import logging
+import data as Data
 
 class Submission(object):
     """
@@ -19,7 +20,9 @@ class Submission(object):
         for machine_id in self.config.get_machine_list():
             self.connect(machine_id)
             for job_id in self.config.get_job_list():
+                self.upload(job_id)
                 self.submit(job_id)
+                self.download(job_id)
 
     def connect(self, machine):
         """Stablish SSH connection with remote cluster"""
@@ -79,3 +82,31 @@ class Submission(object):
             logging.error("Job: failed, check your job configuration")
 
         return int(job.exit_code)
+
+
+    def upload(self, job_id):
+        """Upload all files listed in jobs.conf
+        """
+        upload_files = self.config.get_jobs(job_id).get_upload_files()
+        upload_to = self.config.get_jobs(job_id).get_upload_to()
+        logging.info("SUMI: uploading files")
+        if (not upload_files or not upload_to):
+            logging.info("SUMI: no data to be uploaded")
+            return
+        d = Data.Data(self.config)
+        d.upload(upload_files, upload_to)
+        return
+
+
+    def download(self, job_id):
+        """Download all file listed in jobs.conf
+        """
+        download_files = self.config.get_jobs(job_id).get_download_files()
+        download_to = self.config.get_jobs(job_id).get_download_to()
+        logging.info("SUMI: downloading files")
+        if (not download_files or not download_to):
+            logging.info("SUMI: no data to be downloaded")
+            return
+        d = Data.Data(self.config)
+        d.download(download_files, download_to)
+        return

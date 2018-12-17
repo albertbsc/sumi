@@ -38,12 +38,16 @@ class ServerConfig(object):
 class JobConfig(object):
     """Data structure to store jobs configuration"""
     def __init__(self):
-        self.udocker    = None
-        self.arguments  = None
-        self.cpus       = None
-        self.time       = None
-        self.name       = None
-        self.threads    = None
+        self.udocker        = None
+        self.arguments      = None
+        self.cpus           = None
+        self.time           = None
+        self.name           = None
+        self.threads        = None
+        self.upload_files   = None
+        self.upload_to      = None
+        self.download_files = None
+        self.download_to    = None
 
     def set_udocker(self, udocker):
         self.udocker = udocker
@@ -63,6 +67,18 @@ class JobConfig(object):
     def set_name(self, name):
         self.name = name
 
+    def set_upload_files(self, upload_files):
+        self.upload_files = upload_files
+
+    def set_upload_to(self, upload_to):
+        self.upload_to = upload_to
+
+    def set_download_files(self, download_files):
+        self.download_files = download_files
+
+    def set_download_to(self, download_to):
+        self.download_to = download_to
+
     def get_udocker(self):
         return self.udocker
 
@@ -80,6 +96,18 @@ class JobConfig(object):
 
     def get_name(self):
         return self.name
+
+    def get_upload_files(self):
+        return self.upload_files
+
+    def get_upload_to(self):
+        return self.upload_to
+
+    def get_download_files(self):
+        return self.download_files
+
+    def get_download_to(self):
+        return self.download_to
 
 
 class Config(object):
@@ -142,6 +170,10 @@ class Config(object):
             self.jobs[job_id].set_time(config.get(job_id, 'time'))
             self.jobs[job_id].set_threads(config.get(job_id, 'threads_per_process'))
             self.jobs[job_id].set_name(job_id)
+            self.jobs[job_id].set_upload_to(config.get(job_id, 'upload_to'))
+            self.jobs[job_id].set_upload_files(config.get(job_id, 'upload_files'))
+            self.jobs[job_id].set_download_to(config.get(job_id, 'download_to'))
+            self.jobs[job_id].set_download_files(config.get(job_id, 'download_files'))
 
     def get_server(self, key):
         return self.server[key]

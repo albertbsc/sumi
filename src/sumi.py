@@ -56,7 +56,7 @@ if __name__ == "__main__":
         logging.info('Job: configuring')
         sub = Submission(conf)
         sub.run()
-
+    """
     #Upload local files
     if args.up:
         if not args.machine:
@@ -64,12 +64,15 @@ if __name__ == "__main__":
             raise Exception
         data = Data(conf)
         data.upload(args.up)
+    """
 
+    """
     #Download remote files
     if args.down:
         data = Data(conf)
         data.download(args.down)
-
+    """
+    
     #If no arguments are introduced
     if not (args.run or args.up or args.down):
         logging.info('SUMI: No option selected')

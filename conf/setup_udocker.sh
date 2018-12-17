@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script installs uDocker in a
+# This script installs uDocker in a local directory.
 # Set variable $SUMI_DIR to specify the directory where will uDocker will be
 # installed
 
